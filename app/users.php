@@ -7,7 +7,16 @@ else{
     $uname=$_SESSION['username'];
     $desired_dir="files/$uname/";
 }
+$row = mysqli_fetch_array(mysqli_query($conn,"SELECT * FROM users where username='".$_SESSION['username']."';")); 
+ $roles = $row['role'];
+if ($row['role'] == 1) {
+$uname=$_SESSION['username'];
+    $desired_dir="files/$uname/";
 
+}
+else{
+    header('Location: ../404.php');
+}
 $ro = mysqli_fetch_array(mysqli_query($conn,"SELECT * FROM users where username='".$_SESSION['username']."';"));
 include ('../block.php');
 $id = $ro['id'];
@@ -70,10 +79,7 @@ if(isset($rol)){
         <a href="#">الرئيسية</a>
         <a href="#ab">معلومة عني</a>
         <a href="#in"> إدارة الجلسات</a>
-       <?php if($ro['role'] == 1){?>
-        <a href="users.php">لوحة التحكم</a>
-        <?php }else{
-}?>
+        <a href="index.php">الملف الشخصي</a>
         <a href="logout.php">تسجيل خروج</a>
         <a href="http://moon-library.kesug.com/blog.phpt">contact</a>
     </nav>
@@ -95,10 +101,11 @@ if(isset($rol)){
     <div class="content">
         <span class="hello">hello</span>
         <h3> I'M <span><?php echo $ro['username'] ;?></span> </h3>
+        <p> welcome to admin مرحبا أيها المشرف</p>
         <p>اللهمَّ ثَبتني وثَقِل مُوازِيني ، وحقق إِيماني 
 وارفع دَرجاتِي ، واغفِر خطِيئَتي ،
 وأسألُك الدَرجَات العُلا مِنَّ الجَنَّة وأهلي ومن أُحِب. ❤️🙏🏻</p>
-        <a href="#about" class="btn">about me</a>
+        <a href="#about" class="btn">معلومة عنك</a>
     </div>
 
 </section>
@@ -142,9 +149,58 @@ if(isset($rol)){
                 
             </div>                 
         </div>
+        
+  	<section class="about" id="about">
+
+    <h1 class="heading"> معلومة عن <span>المستخدم</span> </h1>
+<?php
+        $sql = "SELECT * FROM users ORDER BY id DESC";
+$result = $conn->query($sql);
+$siteData = mysqli_fetch_assoc($result);
+if($result = mysqli_query($conn, $sql)){
+            	    if(mysqli_num_rows($result) > 0){
+            			$total_msg = mysqli_num_rows($result);
+              $num = 0;
+              
+                  while($row = mysqli_fetch_array($result)){ 
+                  	$num++;
+/* if ($result->num_rows >= 0) {
+ 
+  while($row = $result->fetch_assoc()) { */
+  	?>
+    <div class="row">
+
+        <div class="box">
+            <h3 class="title" id="ab">معلومات عن المستخدم رقم المعرف  <?php echo $num ;?> </h3>
+            <div class="progress">
+                <h3> username <span><?php echo $row['username'] ;?></span> </h3>
+                
+            </div>
+            <div class="progress">
+                <h3> email <span><?php echo $row['email'] ;?></span> </h3>
+                
+            </div>
+            <div class="progress">
+                <h3> role <span><?php  if($row['role'] == 1){echo "admin مشرف ";}else{
+echo "users مستخدم";} ?></span> </h3>
+                
+            </div>
+                         
+        </div>
+          <?php
+  }
+}
+}
+ else {
+  echo "0 results";
+ }              
+
+?>
+	<h1 class="heading"> إدارة جلسات <span>المستخدمين</span> </h1>
+
         <?php
         
-       $sql = "SELECT * FROM infousers  where username='$id' ORDER BY id DESC limit 30";
+       $sql = "SELECT * FROM infousers  ORDER BY id DESC ";
 $result = $conn->query($sql);
 $siteData = mysqli_fetch_assoc($result);
 if($result = mysqli_query($conn, $sql)){
@@ -157,7 +213,8 @@ if($result = mysqli_query($conn, $sql)){
   while($row = $result->fetch_assoc()) { */
   	?>
   	<div class="box" id="in">
-            <h3 class="title">معلومات عن إدارة الجلسات <?php echo $row['date'] ;?></h3>
+            <h3 class="title">username : <?php $ro = mysqli_fetch_array(mysqli_query($conn,"SELECT * FROM users where id='".$row['username']."';")); 
+echo $ro['username'] ;?></h3>
             
             <div class="progress">
                 <h3> ip adderss<span> <?php echo $row['ip'] ;?></span> </h3>
@@ -198,6 +255,7 @@ if($result = mysqli_query($conn, $sql)){
     
 
 </section>
+
 
 
 
@@ -255,7 +313,7 @@ if($result = mysqli_query($conn, $sql)){
 
 <!-- footer section  -->
 
-    <div class="footer">created by<a href="http://moon-library.kesug.com/blog.php"> <span>abbasawad25 </span></a> | all rights reserved!</div>
+    <div class="footer">created by<a href="http://rixscript.free.nf"> <span>abbasawad25 </span></a> | all rights reserved!</div>
 
 <!-- jquery cdn link  -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
